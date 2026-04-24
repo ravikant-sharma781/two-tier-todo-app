@@ -2,20 +2,27 @@ version: '3'
 
 services:
   frontend:
-    build: ./frontend
+    image: ravikants781434/todo-frontend:latest
     ports:
       - "3000:80"
     depends_on:
       - backend
 
   backend:
-    build: ./backend
+    image: ravikants781434/todo-backend:latest
     ports:
       - "5000:5000"
     depends_on:
       - db
+    environment:
+      - MONGO_URI=mongodb://db:27017/todo_db
 
   db:
     image: mongo
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

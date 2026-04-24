@@ -1,47 +1,89 @@
-const API_URL = "http://98.82.122.41:5000/tasks";
+const API_URL = `${window.location.protocol}//${window.location.hostname}:5000/tasks`;
 
-// Load tasks when page opens
+// Load tasks on page load
 window.onload = fetchTasks;
 
+// =========================
+// Fetch Tasks
+// =========================
 async function fetchTasks() {
-    const res = await fetch(API_URL);
-    const tasks = await res.json();
+    try {
+        const response = await fetch(API_URL);
 
-    const list = document.getElementById("taskList");
-    list.innerHTML = "";
+        if (!response.ok) {
+            throw new Error("Failed to fetch tasks");
+        }
 
-    tasks.forEach(task => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            ${task.text}
-            <button onclick="deleteTask('${task.id}')">❌</button>
-        `;
-        list.appendChild(li);
-    });
+        const tasks = await response.json();
+
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach(task => {
+            const li = document.createElement("li");
+
+            li.innerHTML = `
+                ${task.text}
+                <button onclick="deleteTask('${task.id}')">❌</button>
+            `;
+
+            list.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+    }
 }
 
+// =========================
+// Add Task
+// =========================
 async function addTask() {
-    const input = document.getElementById("taskInput");
-    const text = input.value.trim();
+    try {
+        const input = document.getElementById("taskInput");
+        const text = input.value.trim();
 
-    if (!text) return;
+        if (!text) {
+            alert("Task cannot be empty");
+            return;
+        }
 
-    await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text })
-    });
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ text })
+        });
 
-    input.value = "";
-    fetchTasks(); // refresh list
+        if (!response.ok) {
+            throw new Error("Failed to add task");
+        }
+
+        input.value = "";
+        fetchTasks();
+
+    } catch (error) {
+        console.error("Error adding task:", error);
+    }
 }
 
+// =========================
+// Delete Task
+// =========================
 async function deleteTask(id) {
-    await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
-    });
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: "DELETE"
+        });
 
-    fetchTasks(); // refresh list
+        if (!response.ok) {
+            throw new Error("Failed to delete task");
+        }
+
+        fetchTasks();
+
+    } catch (error) {
+        console.error("Error deleting task:", error);
+    }
 }
