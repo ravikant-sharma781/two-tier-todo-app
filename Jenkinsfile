@@ -9,7 +9,7 @@ stages {
 
     stage('Clone Code') {
         steps {
-            git 'https://github.com/ravikants781434/two-tier-todo-app.git'
+            git 'https://github.com/ravikant-sharma781/two-tier-todo-app.git'
         }
     }
 
