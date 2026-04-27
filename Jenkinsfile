@@ -8,8 +8,9 @@ environment {
 stages {
 
     stage('Clone Code') {
-        steps {
-            git 'https://github.com/ravikant-sharma781/two-tier-todo-app.git'
+    steps {
+        git url: 'https://github.com/ravikant-sharma781/two-tier-todo-app.git',
+            credentialsId: 'github-creds'
         }
     }
 
