@@ -2,14 +2,14 @@ version: '3'
 
 services:
   frontend:
-    image: ravikants781434/todo-frontend:${IMAGE_TAG}
+    image: ravikants781434/todo-frontend:${IMAGE_TAG:-latest}
     ports:
       - "3000:80"
     depends_on:
       - backend
 
   backend:
-    image: ravikants781434/todo-backend:${IMAGE_TAG}
+    image: ravikants781434/todo-backend:${IMAGE_TAG:-latest}
     ports:
       - "5000:5000"
     depends_on:

@@ -54,7 +54,7 @@ stages {
         steps {
             sh '''
             docker-compose pull
-  	    IMAGE_TAG=$BUILD_NUMBER docker-compose up -d
+  	    IMAGE_TAG=$BUILD_NUMBER docker compose up -d
             '''
         }
     }
