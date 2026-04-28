@@ -7,13 +7,6 @@ environment {
 
 stages {
 
-    stage('Clone Code') {
-    steps {
-        git url: 'https://github.com/ravikant-sharma781/two-tier-todo-app.git',
-            credentialsId: 'github-creds'
-        }
-    }
-
     stage('Build Backend Image') {
         steps {
             sh 'docker build -t $DOCKER_HUB/todo-backend ./backend'
