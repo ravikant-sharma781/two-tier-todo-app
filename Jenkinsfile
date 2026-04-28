@@ -3,19 +3,26 @@ agent any
 
 environment {
     DOCKER_HUB = "ravikants781434"
+    IMAGE_TAG = "${BUILD_NUMBER}"
 }
 
 stages {
 
     stage('Build Backend Image') {
         steps {
-            sh 'docker build -t $DOCKER_HUB/todo-backend ./backend'
+            sh '''
+            docker build -t $DOCKER_HUB/todo-backend:$IMAGE_TAG ./backend
+            docker tag $DOCKER_HUB/todo-backend:$IMAGE_TAG $DOCKER_HUB/todo-backend:latest
+            '''
         }
     }
 
     stage('Build Frontend Image') {
         steps {
-            sh 'docker build -t $DOCKER_HUB/todo-frontend ./frontend'
+            sh '''
+            docker build -t $DOCKER_HUB/todo-frontend:$IMAGE_TAG ./frontend
+            docker tag $DOCKER_HUB/todo-frontend:$IMAGE_TAG $DOCKER_HUB/todo-frontend:latest
+            '''
         }
     }
 
@@ -33,18 +40,32 @@ stages {
 
     stage('Push Images') {
         steps {
-            sh 'docker push $DOCKER_HUB/todo-backend'
-            sh 'docker push $DOCKER_HUB/todo-frontend'
+            sh '''
+            docker push $DOCKER_HUB/todo-backend:$IMAGE_TAG
+            docker push $DOCKER_HUB/todo-backend:latest
+
+            docker push $DOCKER_HUB/todo-frontend:$IMAGE_TAG
+            docker push $DOCKER_HUB/todo-frontend:latest
+            '''
         }
     }
 
     stage('Deploy') {
         steps {
-            sh 'docker-compose down || true'
-            sh 'docker-compose up -d'
+            sh '''
+            docker-compose pull
+            IMAGE_TAG=$BUILD_NUMBER docker-compose up -d
+            '''
+        }
+    }
+
+    stage('Cleanup') {
+        steps {
+            sh 'docker image prune -f'
         }
     }
 }
+
 
 }
 
