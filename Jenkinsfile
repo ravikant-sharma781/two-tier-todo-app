@@ -50,15 +50,15 @@ stages {
         }
     }
 
-    stage('Deploy') {
-        steps {
-            sh '''
-            docker-compose pull
-  	    IMAGE_TAG=$BUILD_NUMBER docker compose up -d
-            '''
-        }
+stage('Deploy') {
+    steps {
+        sh '''
+        docker-compose down || true
+        docker-compose pull
+        IMAGE_TAG=$BUILD_NUMBER docker-compose up -d
+        '''
     }
-
+}
     stage('Cleanup') {
         steps {
             sh 'docker image prune -f'
